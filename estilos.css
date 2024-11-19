@@ -1,0 +1,18 @@
+#navbar{
+    opacity: 0.8;
+
+}
+#portadaHeader{
+    background-image: url(imgs/singer2.png);
+    
+    
+}
+#containderTextPortada{
+    opacity: 0.9;
+}
+#informacionPortada{
+
+    .icon-arrow {
+        display: none;
+    }
+}
