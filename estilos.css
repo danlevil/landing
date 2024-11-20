@@ -17,3 +17,11 @@
 #albumesEras{
     background-image: url(imgs/portada2ts.jpg);
 }
+
+#goldencircle{
+    position: relative;
+    bottom: -15px;
+    left: -17px;
+    right: -20px;
+
+}
