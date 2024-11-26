@@ -17,6 +17,9 @@
 #albumesEras{
     background-image: url(imgs/portada2ts.jpg);
 }
+.foto_album{
+    height: 200px;
+}
 
 #goldencircle{
     position: relative;

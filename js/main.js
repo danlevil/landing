@@ -1,134 +1,88 @@
-const databaseURL='https://landing-34787-default-rtdb.firebaseio.com/colection.json';
-let sendData = ( ) => {  
 
-    // Obtén los datos del formulario
+
+const databaseURL = "https://landing-c989b-default-rtdb.firebaseio.com/collection.json";
+
+let sendData = () =>{  
     const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries()); // Convierte FormData a objeto
-    data['saved'] = new Date().toLocaleString('es-CO', { timeZone: 'America/Guayaquil' })
-    // Realiza la petición POST con fetch
-    fetch(databaseURL, {
-        method: 'POST', // Método de la solicitud
+    const data = Object.fromEntries(formData.entries());
+    data['saved'] = new Date().toLocaleString('es-CO', { timeZone: 'America/Guayaquil' });
+
+    fetch(databaseURL,{
+        method: 'POST',
         headers: {
-            'Content-Type': 'application/json' // Especifica que los datos están en formato JSON
+        'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data) // Convierte los datos a JSON
+        body: JSON.stringify(data)
     })
-    .then(response => {
-        if (!response.ok) {
+    .then(response =>{
+        if(!response.ok){
             throw new Error(`Error en la solicitud: ${response.statusText}`);
         }
-        return response.json(); // Procesa la respuesta como JSON
+        return response.json();
     })
-    .then(result => {
-        alert('Agradeciendo tu preferencia, nos mantenemos actualizados y enfocados en atenderte como mereces'); // Maneja la respuesta con un mensaje
-        form.reset()
-
+    .then(result =>{
+        alert('Bienvenido a la familia Swiftie');
+        form.reset();
         getData();
     })
-    .catch(error => {
-        alert('Hemos experimentado un error. ¡Vuelve pronto!'); // Maneja el error con un mensaje
+    .catch(error =>{
+        alert('Hubo un problema con tu suscripción. Por favor, inténtalo de nuevo.');
     });
-
-
-}
-
-
-let getData = async () => {  
-
+};
+let getData = async () =>{  
     try {
-
-        // Realiza la petición fetch a la URL de la base de datos
-        const response = await fetch(databaseURL, {
+        const response = await fetch(databaseURL,{
             method: 'GET'
         });
 
-        // Verifica si la respuesta es exitosa
-        if (!response.ok) {
-         alert('Hemos experimentado un error. ¡Vuelve pronto!'); // Maneja el error con un mensaje
+        if(!response.ok){
+            throw new Error('Hemos experimentado un error. ¡Vuelve pronto!');
         }
 
-        // Convierte la respuesta en formato JSON
         const data = await response.json();
-
-        if(data != null) {
-            
-            let countSuscribers = new Map()
-            if (Object.keys(data).length > 0) {
+        if(data){
+            const voteCounts = {};
             for (let key in data) {
-
-                let { email, saved } = data[key]
-                let date = saved.split(",")[0]
-                let count = countSuscribers.get(date) || 0;
-            countSuscribers.set(date, count + 1)
-            }
-            if (countSuscribers.size > 0) {
-
-                subscribers.innerHTML = ''
-       
-                let index = 1;
-                for (let [date, count] of countSuscribers) {
-                    let rowTemplate = `
- <tr>
-     <th>${index}</th>
-     <td>${date}</td>
-     <td>${count}</td>
- </tr>`
-                    subscribers.innerHTML += rowTemplate
-                    index++;
+                const { albumfavorito } = data[key];
+                if (voteCounts[albumfavorito]) {
+                    voteCounts[albumfavorito]++;
+                } else {
+                    voteCounts[albumfavorito] = 1;
                 }
             }
+            const votantes = document.getElementById('votantes');
+            votantes.innerHTML = '';
+            let index = 1;
+            for(let album in voteCounts){
+                votantes.innerHTML += `
+                    <tr>
+                        <th>${index}</th>
+                        <td>${album}</td>
+                        <td>${voteCounts[album]}</td>
+                    </tr>`;
+                index++;
+            }
         }
-            // END
-
-            // Genere y agregue filas de una tabla HTML para mostrar fechas y cantidades de suscriptores almacenadas 
-
-            // END
-
-        }
-
-    } catch (error) {
-        // Muestra cualquier error que ocurra durante la petición
-        alert('Hemos experimentado un error. ¡Vuelve pronto!'); // Maneja el error con un mensaje
+    }catch(error){
+        console.error('Error:', error);
+        alert('Hubo un problema al cargar los datos. Inténtalo más tarde.');
     }
+};
 
-}
+let ready = () =>{ 
+    console.log('DOM está listo')
 
-
-let ready = () => {
-    console.log('DOM está listo');
+    // Recuperación de datos
     getData();
-    
 }
-
-let loaded = () => {
-    let myform = document.getElementById('form');
-    myform.addEventListener('submit', (eventSubmit) => {
+let loaded = (eventLoaded) =>{
+    const myform = document.getElementById('form');
+    myform.addEventListener('submit', (eventSubmit) =>{
         eventSubmit.preventDefault(); 
-        const emailElement = document.querySelector('.form-control-lg');
-           const emailText = emailElement.value;
-
-           if (emailText.length === 0) {
-             emailElement.focus()
-             emailElement.animate(
-                [
-                    { transform: "translateX(0)" },
-                    { transform: "translateX(50px)" },
-                    { transform: "translateX(-50px)" },
-                    { transform: "translateX(0)" }
-                ],
-                {
-                    duration: 400,
-                    easing: "linear",
-                }
-            )
-            return;
-           }
-           sendData();
+        sendData();
     });
-}
+    getData();
+};
 
-
-
- window.addEventListener("DOMContentLoaded", ready);
- window.addEventListener("load", loaded)
- 
+window.addEventListener("DOMContentLoaded", ready);
+window.addEventListener("load", loaded)
