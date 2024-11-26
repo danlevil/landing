@@ -72,7 +72,6 @@ let getData = async () =>{
 let ready = () =>{ 
     console.log('DOM está listo')
 
-    // Recuperación de datos
     getData();
 }
 let loaded = (eventLoaded) =>{
